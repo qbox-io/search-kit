@@ -1,0 +1,39 @@
+AllCops:
+  Exclude:
+    - db/**/*
+
+Style/FileName:
+  Enabled: false
+
+StringLiterals:
+  Enabled: false
+
+Style/ExtraSpacing:
+  Enabled: false
+
+Style/SpaceInsideParens:
+  Enabled: false
+
+Style/SpaceInsideBrackets:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/AlignArray:
+  Enabled: false
+
+Style/AlignHash:
+  Enabled: false
+
+Style/AlignParameters:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false

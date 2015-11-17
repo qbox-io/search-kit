@@ -1,0 +1,15 @@
+_yardoc/
+.bundle/
+.DS_Store
+.env
+.gem
+.sass-cache/
+.yardoc
+*.db
+coverage/
+Gemfile.lock
+log/
+node_modules/
+pkg/
+spec/reports/
+tmp/

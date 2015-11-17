@@ -1,0 +1,6 @@
+en:
+  http:
+    400: "Bad request"
+    401:
+      inactive: "Inactive or expired token"
+      privilege: "Inadequate permissions on token"
