@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SearchKit::Events::Publish do
-  let(:connection) { SearchKit::Client.connection }
+  let(:connection) { SearchKit::Events.new.connection }
 
   let(:options) do
     {

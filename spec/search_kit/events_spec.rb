@@ -11,17 +11,14 @@ describe SearchKit::Events do
 
   describe '#index' do
     let(:response_body) { { data: [] } }
-    let(:response) { OpenStruct.new(body: response_body.to_json) }
+    let(:response)      { OpenStruct.new(body: response_body.to_json) }
 
     subject { client.index }
 
     before { allow(client.connection).to receive(:get).and_return(response) }
 
     it "calls #connection.get with the base events path" do
-      expect(client.connection)
-        .to receive(:get)
-        .with('/api/events')
-
+      expect(client.connection).to receive(:get)
       subject
     end
 
@@ -35,25 +32,18 @@ describe SearchKit::Events do
   end
 
   describe '#pending' do
-    let(:channel) { "colon:separated:string" }
+    let(:channel)       { "colon:separated:string" }
+    let(:response_body) { { data: [] } }
+    let(:response)      { OpenStruct.new(body: response_body.to_json) }
+
     subject { client.pending(channel) }
 
-    let(:response_body) do
-      {
-        data: []
-      }
-    end
-
-    let(:response) { OpenStruct.new(body: response_body.to_json) }
-
-    before do
-      allow(client.connection).to receive(:get).and_return(response)
-    end
+    before { allow(client.connection).to receive(:get).and_return(response) }
 
     it "calls #connection.get with the base events path" do
       expect(client.connection)
         .to receive(:get)
-        .with("/api/events?filter[channel]=#{channel}")
+        .with('', "filter[channel]" => channel)
 
       subject
     end

@@ -9,7 +9,8 @@ module SearchKit
     attr_reader :connection
 
     def initialize
-      @connection ||= SearchKit::Client.connection
+      uri = [SearchKit.config.app_uri, "search"].join("/")
+      @connection = Faraday.new(uri)
     end
 
     def search(slug, options)

@@ -11,11 +11,12 @@ module SearchKit
     attr_reader :connection
 
     def initialize
-      @connection = SearchKit::Client.connection
+      uri = [SearchKit.config.app_uri, "events"].join("/")
+      @connection = Faraday.new(uri)
     end
 
     def complete(id)
-      response = connection.delete("/api/events/#{id}")
+      response = connection.delete(id)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::EventNotFound if response.status == 404
@@ -24,13 +25,13 @@ module SearchKit
     end
 
     def index
-      response = connection.get('/api/events')
+      response = connection.get
 
       JSON.parse(response.body, symbolize_names: true)
     end
 
     def show(id)
-      response = connection.get("/api/events/#{id}")
+      response = connection.get(id)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::EventNotFound if response.status == 404
@@ -39,7 +40,7 @@ module SearchKit
     end
 
     def pending(channel)
-      response = connection.get("/api/events?filter[channel]=#{channel}")
+      response = connection.get('', "filter[channel]" => channel)
 
       JSON.parse(response.body, symbolize_names: true)
     end
