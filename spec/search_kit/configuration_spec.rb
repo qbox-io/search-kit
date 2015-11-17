@@ -22,4 +22,9 @@ describe SearchKit::Configuration do
     end
   end
 
+  describe 'Config files' do
+    it { require "pry"; binding.pry }
+  end
+
+
 end

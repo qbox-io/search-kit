@@ -21,19 +21,12 @@ module SearchKit
   extend Configuration
 
   configure do |config|
-    config.app_uri = ENV.fetch("APP_URI", "http://localhost:8080")
-    config.app_env = ENV.fetch("APP_ENV", "development")
-    config.app_dir = ENV.fetch("APP_DIR", nil) || Dir.pwd
-    config.verbose = ENV.fetch("APP_VERBOSE", true)
-
-    config.log_dir = ENV.fetch("LOG_DIR") do
-      Dir.mkdir('log') unless Dir.exist?('log')
-
-      'log'
-    end
-
-    config.config_dir     = File.join(config.app_dir, "config")
-    config.token_strategy = -> token { nil }
+    config.app_dir    = fetch("APP_DIR")
+    config.app_env    = fetch("APP_ENV")
+    config.app_uri    = fetch("APP_URI")
+    config.config_dir = File.join(config.app_dir, "config")
+    config.log_dir    = fetch("LOG_DIR")
+    config.verbose    = fetch("APP_VERBOSE")
   end
 
   I18n.load_path += Dir.glob(File.join(config.config_dir, "locales/*.yml"))
