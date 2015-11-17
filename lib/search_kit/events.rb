@@ -6,6 +6,7 @@ module SearchKit
   class Events
     autoload :CLI,     'search_kit/events/cli'
     autoload :Publish, 'search_kit/events/publish'
+    autoload :Poll,    'search_kit/events/poll'
 
     attr_reader :connection
 
