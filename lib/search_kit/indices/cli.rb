@@ -29,6 +29,21 @@ module SearchKit
         warning "No running service found"
       end
 
+      desc "scaffold NAME JSON", "Create an index with a list of documents"
+      def scaffold(name, json = "{}")
+        documents = JSON.parse(json, symbolize_names: true)
+        response  = client.scaffold(name, documents)
+        info response.to_json
+      rescue JSON::ParserError
+        warning "Documents must be given in the form of a JSON array string"
+      rescue Errors::BadRequest
+        warning "Bad create request"
+      rescue Errors::Unprocessable
+        warning "Options given unprocessable"
+      rescue Faraday::ConnectionFailed
+        warning "No running service found"
+      end
+
       desc "update SLUG", "Update an index"
       option :name
       def update(slug)

@@ -1,6 +1,5 @@
 require 'ostruct'
 require 'yaml'
-require 'uri'
 require 'user_config'
 
 module SearchKit

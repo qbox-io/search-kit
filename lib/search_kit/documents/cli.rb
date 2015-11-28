@@ -24,6 +24,8 @@ module SearchKit
         info response.to_json
       rescue JSON::ParserError
         warning "Document must be given in the form of a JSON string"
+      rescue Errors::IndexNotFound
+        warning "No index for #{slug} found"
       rescue Errors::BadRequest
         warning "Bad request given"
       rescue Errors::Unprocessable

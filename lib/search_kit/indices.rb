@@ -1,20 +1,20 @@
 require 'faraday'
 require 'json'
-require 'uri'
 
 module SearchKit
   class Indices
     autoload :CLI, 'search_kit/indices/cli'
 
-    attr_reader :connection
+    attr_reader :connection, :token
 
     def initialize
       uri = [SearchKit.config.app_uri, "indices"].join("/")
       @connection = Faraday.new(uri)
+      @token      = SearchKit.config.app_token
     end
 
     def show(slug)
-      response = connection.get(slug)
+      response = connection.get(slug, token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::IndexNotFound if response.status == 404
@@ -23,7 +23,10 @@ module SearchKit
     end
 
     def create(name)
-      options  = { data: { type: 'indices', attributes: { name: name } } }
+      options = {
+        token: token,
+        data: { type: 'indices', attributes: { name: name } }
+      }
       response = connection.post('/', options)
       body     = JSON.parse(response.body, symbolize_names: true)
 
@@ -34,7 +37,11 @@ module SearchKit
     end
 
     def update(slug, options)
-      options  = { data: { type: 'indices', attributes: options } }
+      options  = {
+        token: token,
+        data: { type: 'indices', attributes: options }
+      }
+
       response = connection.patch(slug, options)
       body     = JSON.parse(response.body, symbolize_names: true)
 
@@ -46,7 +53,7 @@ module SearchKit
     end
 
     def delete(slug)
-      response = connection.delete(slug)
+      response = connection.delete(slug, token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::IndexNotFound if response.status == 404

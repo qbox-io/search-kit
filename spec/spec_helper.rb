@@ -16,6 +16,7 @@ SimpleCov.start do
 end
 
 require 'rack/test'
+require 'faker'
 require 'search_kit'
 
 SearchKit.configure do |config|

@@ -2,13 +2,14 @@ require 'ostruct'
 require 'spec_helper'
 
 describe SearchKit::Documents do
-  let(:id)       { 1 }
-  let(:slug)     { "index-slug" }
-  let(:client)   { described_class.new }
-  let(:status)   { 200 }
-  let(:response) { OpenStruct.new(body: json, status: status) }
   let(:body)     { { data: [] } }
+  let(:client)   { described_class.new }
+  let(:id)       { 1 }
   let(:json)     { body.to_json }
+  let(:response) { OpenStruct.new(body: json, status: status) }
+  let(:slug)     { "index-slug" }
+  let(:status)   { 200 }
+  let(:token)    { SearchKit.config.app_token }
 
   describe '#connection' do
     subject { client.connection }
@@ -17,16 +18,19 @@ describe SearchKit::Documents do
 
   describe '#create' do
     let(:document) { { id: id, title: "The first document" } }
+    let(:params) do
+      {
+        token: token,
+        data: { type: "documents", attributes: document }
+      }
+    end
 
     subject { client.create(slug, document) }
 
     before { allow(client.connection).to receive(:post).and_return(response) }
 
     it "calls #connection.post with the base path and a document" do
-      expect(client.connection)
-        .to receive(:post)
-        .with(slug, data: { type: "documents", attributes: document })
-
+      expect(client.connection).to receive(:post).with(slug, params)
       subject
     end
 
@@ -69,7 +73,7 @@ describe SearchKit::Documents do
     it "calls #connection.get with the given id" do
       expect(client.connection)
         .to receive(:get)
-        .with("#{slug}/#{id}")
+        .with("#{slug}/#{id}", token: token)
 
       subject
     end
@@ -92,6 +96,13 @@ describe SearchKit::Documents do
   describe '#update' do
     let(:document) { { id: id, title: "The first document" } }
 
+    let(:params) do
+      {
+        token: token,
+        data: { type: "documents", id: id, attributes: document }
+      }
+    end
+
     subject { client.update(slug, id, document) }
 
     before do
@@ -99,7 +110,6 @@ describe SearchKit::Documents do
     end
 
     it "calls #connection.patch with the slug, id and document" do
-      params = { data: { type: "documents", id: id, attributes: document } }
       expect(client.connection)
         .to receive(:patch)
         .with("#{slug}/#{id}", params)
@@ -148,7 +158,7 @@ describe SearchKit::Documents do
     it "calls #connection.get with the base events path" do
       expect(client.connection)
         .to receive(:delete)
-        .with("#{slug}/#{id}")
+        .with("#{slug}/#{id}", token: token)
 
       subject
     end

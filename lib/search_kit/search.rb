@@ -1,6 +1,5 @@
 require 'faraday'
 require 'json'
-require 'uri'
 
 module SearchKit
   class Search
@@ -14,7 +13,10 @@ module SearchKit
     end
 
     def search(slug, options)
-      params   = { data: { type: "searches", attributes: options } }
+      params   = {
+        token: SearchKit.config.app_token,
+        data: { type: "searches", attributes: options }
+      }
       response = connection.post(slug, params)
 
       body = JSON.parse(response.body, symbolize_names: true)

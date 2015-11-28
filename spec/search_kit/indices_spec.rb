@@ -2,15 +2,18 @@ require 'ostruct'
 require 'spec_helper'
 
 describe SearchKit::Indices do
-  let(:bad_request) { OpenStruct.new(status: 400, body: {}.to_json) }
-  let(:not_found) { OpenStruct.new(status: 404, body: {}.to_json) }
-  let(:response) { OpenStruct.new(body: response_body.to_json) }
+  let(:bad_request)   { OpenStruct.new(status: 400, body: {}.to_json) }
+  let(:not_found)     { OpenStruct.new(status: 404, body: {}.to_json) }
+  let(:response)      { OpenStruct.new(body: response_body.to_json) }
   let(:unprocessable) { OpenStruct.new(status: 422, body: {}.to_json) }
 
+  let(:client)        { described_class.new }
   let(:response_body) { { data: [] } }
-  let(:client) { described_class.new }
+  let(:token)         { SearchKit.config.app_token }
 
   subject { client }
+
+  it { is_expected.to respond_to :token }
 
   describe '#connection' do
     subject { client.connection }
@@ -25,10 +28,7 @@ describe SearchKit::Indices do
     before { allow(client.connection).to receive(:get).and_return(response) }
 
     it "calls #connection.get with given slug" do
-      expect(client.connection)
-        .to receive(:get)
-        .with(slug)
-
+      expect(client.connection).to receive(:get).with(slug, token: token)
       subject
     end
 
@@ -49,22 +49,25 @@ describe SearchKit::Indices do
         expect { subject }
           .to raise_exception SearchKit::Errors::IndexNotFound
       end
-
     end
+
   end
 
   describe '#create' do
     let(:name) { "name" }
+    let(:params) do
+      {
+        token: token,
+        data: { type: 'indices', attributes: { name: name } }
+      }
+    end
 
     subject { client.create(name) }
 
     before { allow(client.connection).to receive(:post).and_return(response) }
 
     it "calls #connection.post with given name" do
-      expect(client.connection)
-        .to receive(:post)
-        .with('/', { data: { type: 'indices', attributes: { name: name } } })
-
+      expect(client.connection).to receive(:post).with('/', params)
       subject
     end
 
@@ -105,7 +108,10 @@ describe SearchKit::Indices do
     let(:slug) { "name" }
 
     let(:params) do
-      { data: { type: 'indices', attributes: { name: new_name } } }
+      {
+        token: token,
+        data: { type: 'indices', attributes: { name: new_name } }
+      }
     end
 
     subject { client.update(slug, name: new_name) }
@@ -177,7 +183,7 @@ describe SearchKit::Indices do
     it "calls #connection.delete with given slug" do
       expect(client.connection)
         .to receive(:delete)
-        .with(slug)
+        .with(slug, token: token)
 
       subject
     end

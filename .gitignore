@@ -6,6 +6,7 @@ _yardoc/
 .sass-cache/
 .yardoc
 *.db
+demo/
 coverage/
 Gemfile.lock
 log/

@@ -1,6 +1,5 @@
 require 'faraday'
 require 'json'
-require 'uri'
 
 module SearchKit
   class Events
@@ -8,15 +7,16 @@ module SearchKit
     autoload :Publish, 'search_kit/events/publish'
     autoload :Poll,    'search_kit/events/poll'
 
-    attr_reader :connection
+    attr_reader :connection, :token
 
     def initialize
       uri = [SearchKit.config.app_uri, "events"].join("/")
       @connection = Faraday.new(uri)
+      @token      = SearchKit.config.app_token
     end
 
     def complete(id)
-      response = connection.delete(id)
+      response = connection.delete(id, token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::EventNotFound if response.status == 404
@@ -25,13 +25,13 @@ module SearchKit
     end
 
     def index
-      response = connection.get
+      response = connection.get(token: token)
 
       JSON.parse(response.body, symbolize_names: true)
     end
 
     def show(id)
-      response = connection.get(id)
+      response = connection.get(id, token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::EventNotFound if response.status == 404
@@ -40,7 +40,7 @@ module SearchKit
     end
 
     def pending(channel)
-      response = connection.get('', "filter[channel]" => channel)
+      response = connection.get('', "filter[channel]" => channel, token: token)
 
       JSON.parse(response.body, symbolize_names: true)
     end

@@ -2,11 +2,12 @@ require 'ostruct'
 require 'spec_helper'
 
 describe SearchKit::Search do
-  let(:status)        { 200 }
   let(:client)        { described_class.new }
   let(:json)          { response_body.to_json }
   let(:response_body) { { data: [] } }
   let(:response)      { OpenStruct.new(body: json, status: status) }
+  let(:status)        { 200 }
+  let(:token)         { SearchKit.config.app_token }
 
   describe '#connection' do
     subject { client.connection }
@@ -14,10 +15,17 @@ describe SearchKit::Search do
   end
 
   describe '#search' do
-    let(:slug)    { "an-index-slug" }
-    let(:phrase)  { "red boots" }
-    let(:options) { { phrase: phrase, filters: filters } }
     let(:filters) { { size: 10.5, width: "Wide", gender: "Mens" } }
+    let(:options) { { phrase: phrase, filters: filters } }
+    let(:phrase)  { "red boots" }
+    let(:slug)    { "an-index-slug" }
+
+    let(:params) do
+      {
+        token: token,
+        data: { type: 'searches', attributes: options }
+      }
+    end
 
     subject { client.search(slug, options) }
 
@@ -26,10 +34,7 @@ describe SearchKit::Search do
     end
 
     it "calls #connection.get with the base events path" do
-      expect(client.connection)
-        .to receive(:post)
-        .with(slug, data: { type: 'searches', attributes: options })
-
+      expect(client.connection).to receive(:post).with(slug, params)
       subject
     end
 

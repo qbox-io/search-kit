@@ -41,7 +41,7 @@ module SearchKit
       private
 
       def client
-        @client ||= Client.new
+        @client ||= Search.new
       end
 
     end

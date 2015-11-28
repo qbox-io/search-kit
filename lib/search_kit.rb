@@ -4,15 +4,18 @@ require "search_kit/version"
 
 module SearchKit
   autoload :CLI,           'search_kit/cli'
-  autoload :Client,        'search_kit/client'
   autoload :Configuration, 'search_kit/configuration'
   autoload :Documents,     'search_kit/documents'
   autoload :Errors,        'search_kit/errors'
   autoload :Events,        'search_kit/events'
   autoload :Indices,       'search_kit/indices'
+  autoload :Keys,          'search_kit/keys'
   autoload :Logger,        'search_kit/logger'
   autoload :Messaging,     'search_kit/messaging'
+  autoload :Populate,      'search_kit/populate'
+  autoload :Scaffold,      'search_kit/scaffold'
   autoload :Search,        'search_kit/search'
+  autoload :Subscribers,   'search_kit/subscribers'
 
   def self.logger
     @logger ||= Logger.new

@@ -1,20 +1,24 @@
 require 'faraday'
 require 'json'
-require 'uri'
 
 module SearchKit
   class Documents
     autoload :CLI, 'search_kit/documents/cli'
 
-    attr_reader :connection
+    attr_reader :connection, :token
 
     def initialize
       uri = [SearchKit.config.app_uri, "documents"].join("/")
       @connection = Faraday.new(uri)
+      @token      = SearchKit.config.app_token
     end
 
     def create(slug, options)
-      document = { data: { type: "documents", attributes: options } }
+      document = {
+        token: token,
+        data: { type: "documents", attributes: options }
+      }
+
       response = connection.post(slug, document)
       body     = JSON.parse(response.body, symbolize_names: true)
 
@@ -26,7 +30,7 @@ module SearchKit
     end
 
     def show(slug, id)
-      response = connection.get("#{slug}/#{id}")
+      response = connection.get("#{slug}/#{id}", token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::IndexNotFound if response.status == 404
@@ -35,7 +39,11 @@ module SearchKit
     end
 
     def update(slug, id, options)
-      document = { data: { type: "documents", id: id, attributes: options } }
+      document = {
+        token: token,
+        data: { type: "documents", id: id, attributes: options }
+      }
+
       response = connection.patch("#{slug}/#{id}", document)
       body     = JSON.parse(response.body, symbolize_names: true)
 
@@ -47,7 +55,7 @@ module SearchKit
     end
 
     def delete(slug, id)
-      response = connection.delete("#{slug}/#{id}")
+      response = connection.delete("#{slug}/#{id}", token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::IndexNotFound if response.status == 404

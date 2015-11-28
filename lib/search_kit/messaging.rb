@@ -21,22 +21,40 @@ module SearchKit
     # into the module gracefully, for example silence or logging level.
     #
     class Message
-      attr_reader :env, :feedback, :message
+      attr_reader :message
 
       def initialize(message)
-        @env      = SearchKit.config.app_env.to_s.ansi(:magenta)
-        @feedback = SearchKit.config.verbose
-        @message  = message
+        @message = message
       end
 
       def warn
-        Kernel.warn("--> [ #{env} ]: #{message.ansi(:red)}") if feedback
+        Kernel.warn(Prefixed(message.ansi(:red))) if SearchKit.config.verbose
         SearchKit.logger.warn message
       end
 
       def info
-        Kernel.puts("--> [ #{env} ]: #{message.ansi(:cyan)}") if feedback
+        Kernel.puts(Prefixed(message.ansi(:cyan))) if SearchKit.config.verbose
         SearchKit.logger.info message
+      end
+
+      private
+
+      def Prefixed(*messages)
+        Prefixed.new.join(*messages)
+      end
+
+      class Prefixed
+        attr_reader :body
+
+        def initialize
+          env   = SearchKit.config.app_env.to_s.ansi(:magenta)
+          @body = "--> [ #{env} ]: "
+        end
+
+        def join(*messages)
+          [body, *messages].join(" ")
+        end
+
       end
     end
 
