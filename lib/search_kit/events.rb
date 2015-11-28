@@ -19,6 +19,7 @@ module SearchKit
       response = connection.delete(id, token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
+      fail Errors::Unauthorized  if response.status == 401
       fail Errors::EventNotFound if response.status == 404
 
       body
@@ -26,23 +27,20 @@ module SearchKit
 
     def index
       response = connection.get(token: token)
-
-      JSON.parse(response.body, symbolize_names: true)
-    end
-
-    def show(id)
-      response = connection.get(id, token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
-      fail Errors::EventNotFound if response.status == 404
+      fail Errors::Unauthorized if response.status == 401
 
       body
     end
 
     def pending(channel)
       response = connection.get('', "filter[channel]" => channel, token: token)
+      body     = JSON.parse(response.body, symbolize_names: true)
 
-      JSON.parse(response.body, symbolize_names: true)
+      fail Errors::Unauthorized  if response.status == 401
+
+      body
     end
 
     def publish(channel, payload)
@@ -53,6 +51,16 @@ module SearchKit
       )
 
       action.perform
+    end
+
+    def show(id)
+      response = connection.get(id, token: token)
+      body     = JSON.parse(response.body, symbolize_names: true)
+
+      fail Errors::Unauthorized  if response.status == 401
+      fail Errors::EventNotFound if response.status == 404
+
+      body
     end
 
   end

@@ -2,10 +2,21 @@ require 'ostruct'
 require 'spec_helper'
 
 describe SearchKit::Events do
-  let(:token)  { SearchKit.config.app_token }
-  let(:client) { described_class.new }
+  let(:client)   { described_class.new }
+  let(:id)       { 1 }
+  let(:json)     { "{}" }
+  let(:response) { OpenStruct.new(status: status, body: json) }
+  let(:status)   { 200 }
+  let(:token)    { SearchKit.config.app_token }
+
+  before do
+    allow(client.connection).to receive(:delete).and_return(response)
+    allow(client.connection).to receive(:get).and_return(response)
+  end
 
   subject { client }
+
+  it { is_expected.to respond_to :token }
 
   describe '#connection' do
     subject { client.connection }
@@ -13,15 +24,7 @@ describe SearchKit::Events do
   end
 
   describe '#complete' do
-    let(:id)            { 1 }
-    let(:response_body) { "{}" }
-    let(:response)      { OpenStruct.new(body: response_body) }
-
     subject { client.complete(id) }
-
-    before do
-      allow(client.connection).to receive(:delete).and_return(response)
-    end
 
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:delete).with(id, token: token)
@@ -29,21 +32,29 @@ describe SearchKit::Events do
     end
 
     it "parses the json response" do
-      expect(JSON)
-        .to receive(:parse)
-        .with(response_body, symbolize_names: true)
-
+      expect(JSON).to receive(:parse).with(json, symbolize_names: true)
       subject
+    end
+
+    context 'when given status 401' do
+      let(:status) { 401 }
+
+      it do
+        expect { subject }.to raise_exception(SearchKit::Errors::Unauthorized)
+      end
+    end
+
+    context 'when given status 404' do
+      let(:status) { 404 }
+
+      it do
+        expect { subject }.to raise_exception(SearchKit::Errors::EventNotFound)
+      end
     end
   end
 
   describe '#index' do
-    let(:response_body) { { data: [] } }
-    let(:response)      { OpenStruct.new(body: response_body.to_json) }
-
     subject { client.index }
-
-    before { allow(client.connection).to receive(:get).and_return(response) }
 
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:get).with(token: token)
@@ -51,20 +62,21 @@ describe SearchKit::Events do
     end
 
     it "parses the json response" do
-      expect(JSON)
-        .to receive(:parse)
-        .with(response_body.to_json, symbolize_names: true)
-
+      expect(JSON).to receive(:parse).with(json, symbolize_names: true)
       subject
+    end
+
+    context 'when given status 401' do
+      let(:status) { 401 }
+
+      it do
+        expect { subject }.to raise_exception(SearchKit::Errors::Unauthorized)
+      end
     end
   end
 
   describe '#pending' do
-    let(:channel)       { "colon:separated:string" }
-    let(:response_body) { { data: [] } }
-    let(:response)      { OpenStruct.new(body: response_body.to_json) }
-
-    before { allow(client.connection).to receive(:get).and_return(response) }
+    let(:channel) { "colon:separated:string" }
 
     subject { client.pending(channel) }
 
@@ -77,24 +89,25 @@ describe SearchKit::Events do
     end
 
     it "parses the json response" do
-      expect(JSON)
-        .to receive(:parse)
-        .with(response_body.to_json, symbolize_names: true)
-
+      expect(JSON).to receive(:parse).with(json, symbolize_names: true)
       subject
     end
+
+    context 'when given status 401' do
+      let(:status) { 401 }
+
+      it do
+        expect { subject }.to raise_exception(SearchKit::Errors::Unauthorized)
+      end
+    end
+
   end
 
   describe '#publish' do
     let(:channel) { "colon:separated:string" }
 
     let(:payload) do
-      {
-        one_key:  true,
-        two_key:  true,
-        red_key:  true,
-        blue_key: true
-      }
+      { one_key: true, two_key: true, red_key: true, blue_key: true }
     end
 
     let(:options) do
@@ -124,23 +137,14 @@ describe SearchKit::Events do
         .with(options)
         .and_return(publish_double)
 
-      expect(publish_double)
-        .to receive(:perform)
+      expect(publish_double).to receive(:perform)
 
       subject
     end
   end
 
   describe '#show' do
-    let(:id)            { 1 }
-    let(:response_body) { { data: [] } }
-    let(:response)      { OpenStruct.new(body: response_body.to_json) }
-
     subject { client.show(id) }
-
-    before do
-      allow(client.connection).to receive(:get).and_return(response)
-    end
 
     it "calls #connection.get with the base events path / id" do
       expect(client.connection).to receive(:get).with(id, token: token)
@@ -148,11 +152,24 @@ describe SearchKit::Events do
     end
 
     it "parses the json response" do
-      expect(JSON)
-        .to receive(:parse)
-        .with(response_body.to_json, symbolize_names: true)
-
+      expect(JSON).to receive(:parse).with(json, symbolize_names: true)
       subject
+    end
+
+    context 'when given status 401' do
+      let(:status) { 401 }
+
+      it do
+        expect { subject }.to raise_exception(SearchKit::Errors::Unauthorized)
+      end
+    end
+
+    context 'when given status 404' do
+      let(:status) { 404 }
+
+      it do
+        expect { subject }.to raise_exception(SearchKit::Errors::EventNotFound)
+      end
     end
   end
 

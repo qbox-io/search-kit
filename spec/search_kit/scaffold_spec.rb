@@ -2,14 +2,14 @@ require 'ostruct'
 require 'spec_helper'
 
 describe SearchKit::Scaffold do
-  let(:bad_request)   { OpenStruct.new(status: 400, body: {}.to_json) }
-  let(:response)      { OpenStruct.new(body: response_body.to_json) }
-  let(:unauthorized)  { OpenStruct.new(status: 401, body: {}.to_json) }
-  let(:unprocessable) { OpenStruct.new(status: 422, body: {}.to_json) }
-
   let(:client)        { described_class.new }
+  let(:json)          { response_body.to_json }
   let(:response_body) { { data: [] } }
+  let(:response)      { OpenStruct.new(status: status, body: json) }
+  let(:status)        { 200 }
   let(:token)         { SearchKit.config.app_token }
+
+  before { allow(client.connection).to receive(:post).and_return(response) }
 
   subject { client }
 
@@ -30,41 +30,41 @@ describe SearchKit::Scaffold do
       }
     end
 
-    before { allow(client.connection).to receive(:post).and_return(response) }
-
     subject { client.create(name, documents) }
 
     it "calls #connection.post with given name" do
-      expect(client.connection).to receive(:post).with('/', params)
+      expect(client.connection).to receive(:post).with('', params)
       subject
     end
 
     it "parses the json response" do
-      expect(JSON)
-        .to receive(:parse)
-        .with(response_body.to_json, symbolize_names: true)
-
+      expect(JSON).to receive(:parse).with(json, symbolize_names: true)
       subject
     end
 
-    context 'when unprocessable' do
-      before do
-        allow(client.connection).to receive(:post).and_return(unprocessable)
+    context 'when gven status 400' do
+      let(:status) { 400 }
+
+      it "throws a bad request error" do
+        expect { subject }.to raise_exception SearchKit::Errors::BadRequest
       end
+    end
+
+    context 'when given status 401' do
+      let(:status) { 401 }
+
+      it "throws an unprocessable error" do
+        expect { subject }.to raise_exception SearchKit::Errors::Unauthorized
+      end
+    end
+
+    context 'when given status 422' do
+      let(:status) { 422 }
 
       it "throws an unprocessable error" do
         expect { subject }.to raise_exception SearchKit::Errors::Unprocessable
       end
     end
 
-    context 'when bad request' do
-      before do
-        allow(client.connection).to receive(:post).and_return(bad_request)
-      end
-
-      it "throws a bad request error" do
-        expect { subject }.to raise_exception SearchKit::Errors::BadRequest
-      end
-    end
   end
 end

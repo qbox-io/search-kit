@@ -9,6 +9,12 @@ describe SearchKit::Search do
   let(:status)        { 200 }
   let(:token)         { SearchKit.config.app_token }
 
+  before { allow(client.connection).to receive(:post).and_return(response) }
+
+  subject { client }
+
+  it { is_expected.to respond_to :token }
+
   describe '#connection' do
     subject { client.connection }
     it { is_expected.to be_instance_of Faraday::Connection }
@@ -28,10 +34,6 @@ describe SearchKit::Search do
     end
 
     subject { client.search(slug, options) }
-
-    before do
-      allow(client.connection).to receive(:post).and_return(response)
-    end
 
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:post).with(slug, params)
@@ -54,11 +56,11 @@ describe SearchKit::Search do
       end
     end
 
-    context 'when the response status is 422' do
-      let(:status) { 422 }
+    context 'when the response status is 401' do
+      let(:status) { 401 }
 
-      it "raises an unprocessable error" do
-        expect { subject }.to raise_exception(SearchKit::Errors::Unprocessable)
+      it "raises an unauthorized error" do
+        expect { subject }.to raise_exception(SearchKit::Errors::Unauthorized)
       end
     end
 
@@ -70,6 +72,13 @@ describe SearchKit::Search do
       end
     end
 
-  end
+    context 'when the response status is 422' do
+      let(:status) { 422 }
 
+      it "raises an unprocessable error" do
+        expect { subject }.to raise_exception(SearchKit::Errors::Unprocessable)
+      end
+    end
+
+  end
 end

@@ -15,7 +15,7 @@ module SearchKit
 
     def create(options = {})
       options  = { data: { type: 'subscribers', attributes: options } }
-      response = connection.post("/", options)
+      response = connection.post("", options)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::BadRequest    if response.status == 400
@@ -25,7 +25,7 @@ module SearchKit
     end
 
     def info
-      response = connection.get("/", token: token)
+      response = connection.get("", token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::Unauthorized       if response.status == 401
@@ -39,7 +39,7 @@ module SearchKit
         token: token, data: { type: 'subscribers', attributes: options }
       }
 
-      response = connection.patch("/", options)
+      response = connection.patch("", options)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::BadRequest         if response.status == 400

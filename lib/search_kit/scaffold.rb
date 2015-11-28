@@ -21,7 +21,7 @@ module SearchKit
         }
       }
 
-      response = connection.post('/', options)
+      response = connection.post('', options)
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::BadRequest    if response.status == 400

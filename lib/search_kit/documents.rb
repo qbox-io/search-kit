@@ -23,8 +23,19 @@ module SearchKit
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::BadRequest    if response.status == 400
+      fail Errors::Unauthorized  if response.status == 401
       fail Errors::IndexNotFound if response.status == 404
       fail Errors::Unprocessable if response.status == 422
+
+      body
+    end
+
+    def delete(slug, id)
+      response = connection.delete("#{slug}/#{id}", token: token)
+      body     = JSON.parse(response.body, symbolize_names: true)
+
+      fail Errors::Unauthorized  if response.status == 401
+      fail Errors::IndexNotFound if response.status == 404
 
       body
     end
@@ -33,6 +44,7 @@ module SearchKit
       response = connection.get("#{slug}/#{id}", token: token)
       body     = JSON.parse(response.body, symbolize_names: true)
 
+      fail Errors::Unauthorized  if response.status == 401
       fail Errors::IndexNotFound if response.status == 404
 
       body
@@ -48,17 +60,9 @@ module SearchKit
       body     = JSON.parse(response.body, symbolize_names: true)
 
       fail Errors::BadRequest    if response.status == 400
+      fail Errors::Unauthorized  if response.status == 401
       fail Errors::IndexNotFound if response.status == 404
       fail Errors::Unprocessable if response.status == 422
-
-      body
-    end
-
-    def delete(slug, id)
-      response = connection.delete("#{slug}/#{id}", token: token)
-      body     = JSON.parse(response.body, symbolize_names: true)
-
-      fail Errors::IndexNotFound if response.status == 404
 
       body
     end
