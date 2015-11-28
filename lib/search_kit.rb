@@ -12,6 +12,7 @@ module SearchKit
   autoload :Keys,          'search_kit/keys'
   autoload :Logger,        'search_kit/logger'
   autoload :Messaging,     'search_kit/messaging'
+  autoload :Models,        'search_kit/models'
   autoload :Populate,      'search_kit/populate'
   autoload :Scaffold,      'search_kit/scaffold'
   autoload :Search,        'search_kit/search'
