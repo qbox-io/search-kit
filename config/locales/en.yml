@@ -1,6 +1,109 @@
 en:
   http:
-    400: "Bad request"
+    400: Bad request given
     401:
-      inactive: "Inactive or expired token"
-      privilege: "Inadequate permissions on token"
+      inactive: Inactive or expired token
+      privilege: Inadequate permissions on token
+    404: Unable to find %{type} at the given uri
+    422: Options given unprocessable
+  cli:
+    errors:
+      json_parse: "%{type} must be given in the form of a JSON string."
+      no_server: No running SearchKit service found at %{uri}.
+      unreadable: "Response unreadable: %{error}"
+    documents:
+      update:
+        command: update SLUG ID DOCUMENT
+        summary: Update a document with a json string
+        detail: |
+          Updating a document usage and purpose
+      delete:
+        command: delete SLUG ID
+        summary: Delete a document
+        detail: |
+          Deleting a document usage and purpose
+      create:
+        command: create SLUG DOCUMENT
+        summary: Create a document with a json string
+        detail: |
+          Creating a document usage and purpose
+      show:
+        command: show SLUG ID
+        summary: View a document
+        detail: |
+          # View a document (detail)
+
+          I like to pretend this is in markdown, or can be done in markdown. But is it really necessary?
+
+          1. I have no idea.
+
+          2. Who knows.
+    events:
+      complete:
+        command: complete ID
+        summary: Complete event for a given ID
+        detail: |
+          Detail about event completion
+        success: Event %{id} completed
+      pending:
+        command: pending
+        summary: Get all pending events, --channel to filter by channel
+        detail: |
+          Get all pending events, --channel to filter by channel
+        success:
+          discovered:
+            list: "Pending events:"
+            channel: "Pending events for channel `%{channel}`:"
+          empty:
+            list: No pending events found
+            channel: No pending events found for channel `%{channel}`
+      publish:
+        command: publish CHANNEL
+        summary: Publish an event to CHANNEL
+        detail: |
+          Publish an event to CHANNEL
+        success: Event published, status @ %{uri}
+        failure: "Publication failed: %{error}"
+      status:
+        command: status ID
+        summary: Check status of a specific event ID
+        detail: |
+          Check status of a specific event ID
+        success: "Event %{id} status: %{status}"
+    indices:
+      archive:
+        command: archive SLUG
+        summary: Archive an index
+        detail: |
+          Archive an index
+      create:
+        command: create NAME
+        summary: Create an index
+        detail: |
+          Create an index
+      scaffold:
+        command: scaffold NAME JSON
+        summary: Create an index and populate it with a list of documents
+        detail: |
+          Create an index and populate it with a list of documents
+      show:
+        command: show SLUG
+        summary: View an index
+        detail: |
+          View an index
+      update:
+        command: update SLUG
+        summary: Update an index
+        detail: |
+          In depth detail about index updating
+    search:
+      create:
+        command: search SLUG PHRASE
+        summary: Search an index
+        detail: |
+          Search an index
+        success:
+          headline: |
+            "Searching `%{slug}` for titles matching `%{phrase}`:"
+          info: |
+            " - Found %{search.results} titles in %{search.time}ms"

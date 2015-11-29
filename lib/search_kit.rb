@@ -1,22 +1,17 @@
 require 'bundler/setup'
 require 'i18n'
 require "search_kit/version"
+require "search_kit/thor"
 
 module SearchKit
   autoload :CLI,           'search_kit/cli'
+  autoload :Clients,       'search_kit/clients'
   autoload :Configuration, 'search_kit/configuration'
-  autoload :Documents,     'search_kit/documents'
   autoload :Errors,        'search_kit/errors'
-  autoload :Events,        'search_kit/events'
-  autoload :Indices,       'search_kit/indices'
-  autoload :Keys,          'search_kit/keys'
   autoload :Logger,        'search_kit/logger'
-  autoload :Messaging,     'search_kit/messaging'
+  autoload :Messages,      'search_kit/messages'
   autoload :Models,        'search_kit/models'
-  autoload :Populate,      'search_kit/populate'
-  autoload :Scaffold,      'search_kit/scaffold'
-  autoload :Search,        'search_kit/search'
-  autoload :Subscribers,   'search_kit/subscribers'
+  autoload :Polling,       'search_kit/polling'
 
   def self.logger
     @logger ||= Logger.new
