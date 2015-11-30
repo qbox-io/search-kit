@@ -109,7 +109,5 @@ en:
         detail: |
           Search an index
         success:
-          headline: |
-            "Searching `%{slug}` for titles matching `%{phrase}`:"
-          info: |
-            " - Found %{search.results} titles in %{search.time}ms"
+          headline: "Searching `%{slug}` for titles matching `%{phrase}`:"
+          info: " - Found %{count} titles in %{time}ms"

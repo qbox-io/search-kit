@@ -10,12 +10,10 @@ module SearchKit
       attribute :score
 
       def initialize(document_data = {})
-        attributes = document_data.fetch(:attributes, {})
-
         super(
-          source: attributes,
-          id:     attributes.fetch(:id, nil),
-          score:  attributes.fetch(:score, nil)
+          source: document_data.fetch(:source, {}),
+          id:     document_data.fetch(:id, nil),
+          score:  document_data.fetch(:score, nil)
         )
       end
 
