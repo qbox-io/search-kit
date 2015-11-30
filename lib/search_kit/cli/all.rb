@@ -57,6 +57,8 @@ module SearchKit
 
         config("app_token", subscriber.creator_tokens.first)
         messages.info("Alright!  Your search-kit install has been set up.")
+      rescue Errors::Unprocessable
+        messages.unprocessable
       end
     end
   end
