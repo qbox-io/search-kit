@@ -16,9 +16,8 @@ module SearchKit
       environment = SearchKit.config.app_env
 
       loginfo = [
-        SearchKit.config.app_dir,
         SearchKit.config.log_dir,
-        "service-layer-#{environment}.log"
+        "search-kit-#{environment}.log"
       ]
 
       logpath = File.join(*loginfo)

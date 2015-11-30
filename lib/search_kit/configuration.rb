@@ -42,16 +42,21 @@ module SearchKit
       default_table = {
         APP_URI:     "http://localhost:8080",
         APP_ENV:     "development",
-        APP_DIR:     File.expand_path("../../", __dir__),
+        APP_DIR:     default_app_dir,
         APP_VERBOSE: true,
         LOG_DIR:     default_log_dir
       }.fetch(key, nil)
     end
 
-    def default_log_dir
-      Dir.mkdir('log') unless Dir.exist?('log')
+    def default_app_dir
+      File.expand_path("../../", __dir__)
+    end
 
-      'log'
+    def default_log_dir
+      log_dir = File.join(default_app_dir, 'log')
+      Dir.mkdir(log_dir) unless Dir.exist?(log_dir)
+
+      log_dir
     end
 
   end
