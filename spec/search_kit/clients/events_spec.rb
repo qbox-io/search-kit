@@ -4,7 +4,8 @@ require 'spec_helper'
 describe SearchKit::Clients::Events do
   let(:client)   { described_class.new }
   let(:id)       { 1 }
-  let(:json)     { "{}" }
+  let(:hash)     { {} }
+  let(:json)     { hash.to_json }
   let(:response) { OpenStruct.new(status: status, body: json) }
   let(:status)   { 200 }
   let(:token)    { SearchKit.config.app_token }
@@ -13,6 +14,7 @@ describe SearchKit::Clients::Events do
     allow(client.connection).to receive(:delete).and_return(response)
     allow(client.connection).to receive(:get).and_return(response)
     allow(client.connection).to receive(:post).and_return(response)
+    allow(JSON).to receive(:parse).and_return(hash)
   end
 
   subject { client }
@@ -26,6 +28,8 @@ describe SearchKit::Clients::Events do
 
   describe '#complete' do
     subject { client.complete(id) }
+
+    it { is_expected.to be_instance_of SearchKit::Models::Event }
 
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:delete).with(id, token: token)
@@ -57,6 +61,8 @@ describe SearchKit::Clients::Events do
   describe '#index' do
     subject { client.index }
 
+    it { is_expected.to be_instance_of SearchKit::Models::Events }
+
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:get).with(token: token)
       subject
@@ -80,6 +86,8 @@ describe SearchKit::Clients::Events do
     let(:channel) { "colon:separated:string" }
 
     subject { client.pending(channel) }
+
+    it { is_expected.to be_instance_of SearchKit::Models::Events }
 
     it "calls #connection.get with the base events path" do
       expect(client.connection)
@@ -123,6 +131,8 @@ describe SearchKit::Clients::Events do
     end
 
     subject { client.publish(channel, payload) }
+
+    it { is_expected.to be_instance_of SearchKit::Models::Event }
 
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:post).with('', params)

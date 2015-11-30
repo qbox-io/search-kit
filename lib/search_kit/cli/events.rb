@@ -4,45 +4,83 @@ require 'search_kit/thor'
 module SearchKit
   class CLI < Thor
     class Events < Thor
-      autoload :Complete, 'search_kit/cli/events/complete'
-      autoload :List,     'search_kit/cli/events/list'
-      autoload :Pending,  'search_kit/cli/events/pending'
-      autoload :Publish,  'search_kit/cli/events/publish'
-      autoload :Status,   'search_kit/cli/events/status'
-
       namespace :events
 
-      document :complete
-      def complete(id)
-        Complete.new(client, id).perform
-      end
+      no_commands do
+        def client
+          @client ||= SearchKit::Clients::Events.new
+        end
 
-      document :pending
-      option :channel, aliases: ['-c']
-      def pending
-        channel = options.fetch('channel', nil)
-        if channel
-          Pending.new(client, channel).perform
-        else
-          List.new(client).perform
+        def messages
+          @messages ||= SearchKit::Messages.new
         end
       end
 
+      document :complete
+      def complete(id)
+        client.complete(id)
+        messages.info I18n.t('cli.events.complete.success', id: id)
+      rescue Errors::EventNotFound
+        messages.not_found
+      rescue Faraday::ConnectionFailed
+        messages.no_service
+      end
+
+      document :pending
+      def pending(channel = nil)
+        events = channel ? client.pending(channel) : client.index
+
+        message_path = %w(cli events pending success)
+        message_path << (channel ? 'filtered' : 'index')
+        message_path << (events.any? ? 'discovered' : 'empty')
+        message = I18n.t(message_path.join('.'), channel: channel)
+
+        messages.info(message)
+        events.each { |event| messages.info(event.to_json) }
+      rescue Errors::BadRequest
+        messages.bad_request
+      rescue Errors::Unauthorized
+        messages.unauthorized
+      rescue Errors::Unprocessable
+        messages.unprocessable
+      rescue Faraday::ConnectionFailed
+        messages.no_service
+      end
+
       document :publish
-      option :payload, aliases: ['-p'], type: :hash, required: true
-      def publish(channel)
-        Publish.new(client, channel, options).perform
+      def publish(channel, payload)
+        payload = JSON.parse(payload, symbolize_names: true)
+        event   = client.publish(channel, payload)
+
+        message = I18n.t('cli.events.publish.success',
+          channel: channel,
+          id:      event.id
+        )
+
+        messages.info(message)
+      rescue Errors::BadRequest
+        messages.bad_request
+      rescue Errors::Unauthorized
+        messages.unauthorized
+      rescue Errors::Unprocessable
+        messages.unprocessable
+      rescue Faraday::ConnectionFailed
+        messages.no_service
+      rescue JSON::ParserError
+        messages.json_parse_error
       end
 
       document :status
       def status(id)
-        Status.new(client, id).perform
-      end
+        event  = client.show(id)
+        status = event.state
 
-      private
-
-      def client
-        @client ||= Events.new
+        message = I18n.t('cli.events.status.success', id: id, status: status)
+        messages.info(message)
+      rescue Errors::EventNotFound
+        messages.not_found
+      rescue Faraday::ConnectionFailed
+        messages.no_service
       end
 
     end

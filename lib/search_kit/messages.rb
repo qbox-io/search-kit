@@ -6,6 +6,10 @@ module SearchKit
 
     include Messaging
 
+    def unauthorized
+      warning(I18n.t('http.401'))
+    end
+
     def bad_request
       warning(I18n.t('http.400'))
     end

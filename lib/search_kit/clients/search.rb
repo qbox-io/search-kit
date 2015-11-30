@@ -25,7 +25,7 @@ module SearchKit
         fail Errors::IndexNotFound if response.status == 404
         fail Errors::Unprocessable if response.status == 422
 
-        body
+        SearchKit::Models::Search.new(body.fetch(:data, {}))
       end
 
     end

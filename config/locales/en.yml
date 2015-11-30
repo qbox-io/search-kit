@@ -51,19 +51,25 @@ en:
         detail: |
           Get all pending events, --channel to filter by channel
         success:
-          discovered:
-            list: "Pending events:"
-            channel: "Pending events for channel `%{channel}`:"
-          empty:
-            list: No pending events found
-            channel: No pending events found for channel `%{channel}`
+          index:
+            discovered: "Pending events:"
+            empty: No pending events found
+          filtered:
+            discovered: "Pending events for channel `%{channel}`:"
+            empty: No pending events found for channel `%{channel}`
       publish:
-        command: publish CHANNEL
-        summary: Publish an event to CHANNEL
+        command: publish CHANNEL PAYLOAD
+        summary: Publish an event payload (as a json string) to CHANNEL
         detail: |
-          Publish an event to CHANNEL
-        success: Event published, status @ %{uri}
-        failure: "Publication failed: %{error}"
+          Publish an event payload (as a json string) to CHANNEL
+        success: |
+          Event published, check status with this command:
+
+          search-kit events status %{id}
+
+          Or look at use this command to to see this event and all neighboring events:
+
+          search-kit events pending %{channel}
       status:
         command: status ID
         summary: Check status of a specific event ID

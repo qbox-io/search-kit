@@ -4,12 +4,15 @@ require 'spec_helper'
 describe SearchKit::Clients::Search do
   let(:client)        { described_class.new }
   let(:json)          { response_body.to_json }
-  let(:response_body) { { data: [] } }
+  let(:response_body) { { data: {} } }
   let(:response)      { OpenStruct.new(body: json, status: status) }
   let(:status)        { 200 }
   let(:token)         { SearchKit.config.app_token }
 
-  before { allow(client.connection).to receive(:post).and_return(response) }
+  before do
+    allow(client.connection).to receive(:post).and_return(response)
+    allow(JSON).to receive(:parse).and_return(response_body)
+  end
 
   subject { client }
 
@@ -35,15 +38,15 @@ describe SearchKit::Clients::Search do
 
     subject { client.search(slug, options) }
 
+    it { is_expected.to be_instance_of SearchKit::Models::Search }
+
     it "calls #connection.get with the base events path" do
       expect(client.connection).to receive(:post).with(slug, params)
       subject
     end
 
     it "parses the json response" do
-      expect(JSON)
-        .to receive(:parse)
-        .with(response_body.to_json, symbolize_names: true)
+      expect(JSON).to receive(:parse).with(json, symbolize_names: true)
 
       subject
     end
