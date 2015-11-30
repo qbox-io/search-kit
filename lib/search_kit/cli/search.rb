@@ -10,11 +10,11 @@ module SearchKit
 
       no_commands do
         def client
-          @client ||= Search.new
+          @client ||= SearchKit::Clients::Search.new
         end
 
         def messages
-          @messages ||= Messages.new
+          @messages ||= SearchKit::Messages.new
         end
       end
 

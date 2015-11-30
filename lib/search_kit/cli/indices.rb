@@ -14,7 +14,7 @@ module SearchKit
         end
 
         def messages
-          @messages ||= Messages.new
+          @messages ||= SearchKit::Messages.new
         end
       end
 
