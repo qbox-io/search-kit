@@ -4,4 +4,4 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'search_kit'
 
-SearchKit::CLI.start(ARGV)
+SearchKit::CLI::All.start(ARGV)

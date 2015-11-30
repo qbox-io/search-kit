@@ -2,7 +2,7 @@ require 'thor'
 require 'search_kit/thor'
 
 module SearchKit
-  class CLI < Thor
+  module CLI
     class Search < Thor
       namespace :search
 
