@@ -38,7 +38,7 @@ module SearchKit
           end
         end
 
-        lines.each(&messages.method(:info))
+        lines.each { |line| messages.info(line) }
       rescue Errors::Unauthorized
         messages.unauthorized
       rescue Errors::IndexNotFound
