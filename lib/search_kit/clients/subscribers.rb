@@ -7,7 +7,7 @@ module SearchKit
       attr_reader :connection, :token
 
       def initialize
-        uri = [SearchKit.config.app_uri, "subscribers"].join("/")
+        uri = [ SearchKit.config.app_uri, "subscribers" ].join("/")
         @connection = Faraday.new(uri)
         @token      = SearchKit.config.app_token
       end
@@ -20,7 +20,7 @@ module SearchKit
         fail Errors::BadRequest    if response.status == 400
         fail Errors::Unprocessable if response.status == 422
 
-        body
+        SearchKit::Models::Subscriber.new body.fetch(:data, {})
       end
 
       def info
@@ -30,7 +30,7 @@ module SearchKit
         fail Errors::Unauthorized       if response.status == 401
         fail Errors::SubscriberNotFound if response.status == 404
 
-        body
+        SearchKit::Models::Subscriber.new body.fetch(:data, {})
       end
 
       def update(options = {})
@@ -46,7 +46,7 @@ module SearchKit
         fail Errors::SubscriberNotFound if response.status == 404
         fail Errors::Unprocessable      if response.status == 422
 
-        body
+        SearchKit::Models::Subscriber.new body.fetch(:data, {})
       end
 
     end

@@ -6,8 +6,9 @@ describe SearchKit::Clients::Subscribers do
   let(:email)         { "email@example.com" }
   let(:json)          { response_body.to_json }
   let(:password)      { "password" }
-  let(:response_body) { { data: [] } }
+  let(:response_body) { { data: {} } }
   let(:response)      { OpenStruct.new(status: status, body: json) }
+  let(:subscriber)    { SearchKit::Models::Subscriber.new }
   let(:status)        { 200 }
   let(:token)         { SearchKit.config.app_token }
 
@@ -15,6 +16,7 @@ describe SearchKit::Clients::Subscribers do
     allow(client.connection).to receive(:get).and_return(response)
     allow(client.connection).to receive(:patch).and_return(response)
     allow(client.connection).to receive(:post).and_return(response)
+    allow(JSON).to receive(:parse).and_return(response_body)
   end
 
   subject { client }
@@ -37,6 +39,8 @@ describe SearchKit::Clients::Subscribers do
     end
 
     subject { client.create(email: email, password: password) }
+
+    it { is_expected.to be_instance_of SearchKit::Models::Subscriber }
 
     it "calls #connection.post with given name" do
       expect(client.connection).to receive(:post).with('', params)
@@ -68,6 +72,8 @@ describe SearchKit::Clients::Subscribers do
 
   describe '#info' do
     subject { client.info }
+
+    it { is_expected.to be_instance_of SearchKit::Models::Subscriber }
 
     it "calls #connection.get" do
       expect(client.connection).to receive(:get).with("", token: token)
@@ -110,6 +116,8 @@ describe SearchKit::Clients::Subscribers do
     end
 
     subject { client.update(email: email, password: password) }
+
+    it { is_expected.to be_instance_of SearchKit::Models::Subscriber }
 
     it "calls #connection.patch with given id and attributes" do
       expect(client.connection).to receive(:patch).with("", params)
