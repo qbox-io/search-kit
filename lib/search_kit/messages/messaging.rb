@@ -15,6 +15,14 @@ module SearchKit
         Message.new(message).warn
       end
 
+      def prompt(message)
+        Message.new(message).prompt
+      end
+
+      def password_prompt(message)
+        Message.new(message).password_prompt
+      end
+
       private
 
       # Most of the logic for the Messaging module exists in this (not so)
@@ -22,10 +30,11 @@ module SearchKit
       # into the module gracefully, for example silence or logging level.
       #
       class Message
-        attr_reader :message
+        attr_reader :cli, :message
 
         def initialize(message)
           @message = message
+          @cli     = HighLine.new
         end
 
         def warn
@@ -36,6 +45,16 @@ module SearchKit
         def info
           Kernel.puts(Prefixed(message.ansi(:cyan))) if SearchKit.config.verbose
           SearchKit.logger.info message
+        end
+
+        def prompt
+          cli.ask(Prefixed(message.ansi(:cyan)))
+        end
+
+        def password_prompt
+          cli.ask(Prefixed(message.ansi(:cyan))) do |prompt|
+            prompt.echo = '*'
+          end
         end
 
         private

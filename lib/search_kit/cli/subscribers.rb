@@ -1,5 +1,7 @@
-require 'thor'
+require 'faraday'
+require 'json'
 require 'search_kit/thor'
+require 'thor'
 
 module SearchKit
   module CLI

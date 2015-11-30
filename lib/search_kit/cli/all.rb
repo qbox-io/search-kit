@@ -1,16 +1,14 @@
 require 'ansi'
+require 'faraday'
 require 'highline'
-require 'thor'
+require 'json'
 require 'search_kit/thor'
+require 'thor'
 
 module SearchKit
   module CLI
     class All < Thor
       no_commands do
-        def cli
-          @cli ||= HighLine.new
-        end
-
         def messages
           @messages ||= Messages.new
         end
@@ -24,6 +22,9 @@ module SearchKit
 
       desc "indices", "Manage your SearchKit indices"
       subcommand "indices", SearchKit::CLI::Indices
+
+      desc "scaffolds", "Build and populate an index in one command"
+      subcommand "scaffolds", SearchKit::CLI::Scaffolds
 
       desc "search", "Quickly search your indices"
       subcommand "search", SearchKit::CLI::Search
@@ -47,11 +48,11 @@ module SearchKit
 
       desc "setup", "Set up your search-kit environment"
       def setup
-        email    = cli.ask("Email: ".ansi(:cyan))
-        password = cli.ask("Password: ".ansi(:cyan)) do |query|
-          query.echo = '*'
-        end
+        messages.info("Setting up a new SearchKit account")
+        messages.info("")
 
+        email      = messages.prompt("Email: ")
+        password   = messages.password_prompt("Password: ")
         client     = SearchKit::Clients::Subscribers.new
         subscriber = client.create(email: email, password: password)
 

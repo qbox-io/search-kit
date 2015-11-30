@@ -9,6 +9,7 @@ module SearchKit
     autoload :Documents,   'search_kit/cli/documents'
     autoload :Events,      'search_kit/cli/events'
     autoload :Indices,     'search_kit/cli/indices'
+    autoload :Scaffolds,   'search_kit/cli/scaffolds'
     autoload :Search,      'search_kit/cli/search'
     autoload :Subscribers, 'search_kit/cli/subscribers'
   end

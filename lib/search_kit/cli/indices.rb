@@ -1,5 +1,7 @@
-require 'thor'
+require 'faraday'
+require 'json'
 require 'search_kit/thor'
+require 'thor'
 
 module SearchKit
   module CLI
@@ -40,24 +42,6 @@ module SearchKit
         messages.unprocessable
       rescue Faraday::ConnectionFailed
         messages.no_service
-      end
-
-      document :scaffold
-      def scaffold(name, json = "[]")
-        documents = JSON.parse(json, symbolize_names: true)
-        response  = client.scaffold(name, documents)
-
-        messages.info response.to_json
-      rescue Errors::Unauthorized
-        messages.unauthorized
-      rescue Errors::BadRequest
-        messages.bad_request
-      rescue Errors::Unprocessable
-        messages.unprocessable
-      rescue Faraday::ConnectionFailed
-        messages.no_service
-      rescue JSON::ParserError
-        messages.json_parse_error
       end
 
       document :show
