@@ -14,8 +14,9 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/qbox-io/search-kit"
   spec.license       = "MIT"
 
-  spec.files         = Dir.glob('**/*')
-  spec.test_files    = Dir.glob('spec/**/*')
+  spec.files         = %w[search-kit.gemspec]
+  spec.files        += Dir['*.md', 'bin/*', 'lib/**/*.rb']
+  spec.test_files    = Dir['spec/**/*.rb']
   spec.require_paths = ["lib"]
 
   spec.executables   << 'search-kit'
