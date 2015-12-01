@@ -12,10 +12,10 @@ module SearchKit
         @token      = SearchKit.config.app_token
       end
 
-      def create(slug, options)
+      def create(slug, document)
         document = {
           token: token,
-          data: { type: "documents", attributes: options }
+          data: { type: "documents", attributes: document }
         }
 
         response = connection.post(slug, document)
@@ -49,10 +49,10 @@ module SearchKit
         body
       end
 
-      def update(slug, id, options)
+      def update(slug, id, document)
         document = {
           token: token,
-          data: { type: "documents", id: id, attributes: options }
+          data: { type: "documents", id: id, attributes: document }
         }
 
         response = connection.patch("#{slug}/#{id}", document)

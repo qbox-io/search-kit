@@ -21,7 +21,7 @@ module SearchKit
       document :create
       option :display, aliases: ['-d'], type: :array, required: false
       def create(slug, phrase)
-        search    = client.search(slug, phrase: phrase)
+        search    = client.create(slug, phrase: phrase)
         head_path = 'cli.search.create.success.headline'
         info_path = 'cli.search.create.success.info'
         headline  = I18n.t(head_path, slug: slug, phrase: phrase)

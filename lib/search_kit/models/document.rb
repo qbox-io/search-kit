@@ -23,6 +23,16 @@ module SearchKit
         fail AttributeNotFound, field
       end
 
+      def respond_to_missing?(method_name, include_private = false)
+        source.has_key?(method_name) || super(method_name, include_private)
+      end
+
+      def method_missing(method_name, *arguments, &block)
+        get(method_name)
+      rescue AttributeNotFound
+        super(method_name, *arguments, &block)
+      end
+
     end
   end
 end

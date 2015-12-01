@@ -12,7 +12,7 @@ module SearchKit
         @token      = SearchKit.config.app_token
       end
 
-      def search(slug, options)
+      def create(slug, options)
         params = {
           token: token, data: { type: "searches", attributes: options }
         }

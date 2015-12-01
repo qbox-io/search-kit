@@ -10,12 +10,12 @@ describe SearchKit::CLI::Search do
   subject { cli }
 
   describe '#create' do
-    before { allow(cli.client).to receive(:search).and_return(response) }
+    before { allow(cli.client).to receive(:create).and_return(response) }
 
     subject { cli.create(slug, phrase) }
 
     it "calls client.search with the slug, and phrase" do
-      expect(cli.client).to receive(:search).with(slug, phrase: phrase)
+      expect(cli.client).to receive(:create).with(slug, phrase: phrase)
       subject
     end
 
@@ -25,7 +25,7 @@ describe SearchKit::CLI::Search do
     end
 
     context 'error handling' do
-      before { allow(cli.client).to receive(:search).and_raise(*error) }
+      before { allow(cli.client).to receive(:create).and_raise(*error) }
 
       context 'unauthorized error' do
         let(:error) { SearchKit::Errors::Unauthorized }

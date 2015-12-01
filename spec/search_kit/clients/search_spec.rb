@@ -23,7 +23,7 @@ describe SearchKit::Clients::Search do
     it { is_expected.to be_instance_of Faraday::Connection }
   end
 
-  describe '#search' do
+  describe '#create' do
     let(:filters) { { size: 10.5, width: "Wide", gender: "Mens" } }
     let(:options) { { phrase: phrase, filters: filters } }
     let(:phrase)  { "red boots" }
@@ -36,7 +36,7 @@ describe SearchKit::Clients::Search do
       }
     end
 
-    subject { client.search(slug, options) }
+    subject { client.create(slug, options) }
 
     it { is_expected.to be_instance_of SearchKit::Models::Search }
 
