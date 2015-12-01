@@ -34,7 +34,7 @@ describe SearchKit::Clients::Populate do
     let(:params) do
       {
         token: token,
-        data: [{ type: "documents", attributes: document }]
+        data: [{ type: "documents", id: id, attributes: document }]
       }
     end
 

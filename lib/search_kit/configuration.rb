@@ -40,7 +40,7 @@ module SearchKit
 
     def default(key)
       default_table = {
-        APP_URI:     "http://localhost:8080",
+        APP_URI:     "http://gossamer-staging.qbox.io/api",
         APP_ENV:     "development",
         APP_DIR:     default_app_dir,
         APP_VERBOSE: true,

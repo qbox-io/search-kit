@@ -14,7 +14,11 @@ module SearchKit
 
       def create(slug, documents)
         documents = documents.map do |document|
-          { type: 'documents', attributes: document }
+          {
+            type:      'documents',
+            id:         document.fetch(:id, nil),
+            attributes: document
+          }
         end
 
         params   = { token: token, data: documents }
