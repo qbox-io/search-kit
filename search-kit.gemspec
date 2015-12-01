@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files         = %w[search-kit.gemspec]
-  spec.files        += Dir['*.md', 'bin/*', 'lib/**/*.rb']
+  spec.files        += Dir['*.md', 'bin/*', 'lib/**/*.rb', 'config/**/*.yml']
   spec.test_files    = Dir['spec/**/*.rb']
   spec.require_paths = ["lib"]
 
