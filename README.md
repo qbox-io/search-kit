@@ -1,10 +1,12 @@
 # SearchKit
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/service/layer`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Description
+
+SearchKit is a Ruby wrapper and CLI toolkit for the SearchKit APIs.  The whole idea is to give folks an easy and pleasant way to include search features in their applications.
 
 ## Installation
 
-You can start by [installing the ruby CLI tools](https://github.com/qbox-io/search-kit), which requires Ruby 2.0 or later:
+You can start by installing the gem:
 
     gem install search-kit
 
