@@ -17,6 +17,10 @@ module SearchKit
     @logger ||= Logger.new
   end
 
+  def self.logger=(new_logger)
+    @logger = new_logger
+  end
+
   extend Configuration
 
   configure do |config|
